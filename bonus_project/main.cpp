@@ -1,6 +1,8 @@
-#include "central_lib.h"
+#include "login.h"
 int main()
 {
-	drawbox(40, 5, 40, 20);
-	_getch();
+	login_system();
+	gotoxy(0, 27);
+	system("pause");
+	return 0;
 }

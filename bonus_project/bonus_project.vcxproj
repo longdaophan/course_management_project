@@ -128,9 +128,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="central_lib.h" />
+    <ClInclude Include="login.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="central_lib.cpp" />
+    <ClCompile Include="login.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

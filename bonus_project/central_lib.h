@@ -88,5 +88,17 @@ struct list_class
 	Class* tail;
 	int size;
 };
-void gotoxy(int x, int y);
+void gotoxy(short x, short y);
 void drawbox(int col, int row, int width, int height);
+void init_list_student(list_student &lstudent);
+void init_list_staff(list_staff &lstaff);
+void init_list_course(list_course &lcourse);
+void init_list_class(list_class& lclass);
+void get_file_student(list_student& lstudent);
+void add_student(list_student& lstudent, student* add);
+void del_student(list_student& lstudent, student* del);
+void add_course(list_course& lcourse, course* add);
+void del_course(list_course& lcourse, course* del);
+string convert_date_to_str(Date date);
+Date convert_str_to_date(string str);
+void display_student(list_student lstudent);
