@@ -14,12 +14,12 @@ struct Date
 	int day;
 	int month;
 	int year;
-	string week_day;
 };
 struct student
 {
 	int no;
 	string student_ID;
+	string password;
 	string first_name;
 	string last_name;
 	string gender;
@@ -38,6 +38,7 @@ struct staff
 {
 	int no;
 	string staff_ID;
+	string password;
 	string first_name;
 	string last_name;
 	string gender;
@@ -95,8 +96,13 @@ void init_list_staff(list_staff &lstaff);
 void init_list_course(list_course &lcourse);
 void init_list_class(list_class& lclass);
 void get_file_student(list_student& lstudent);
+void get_file_staff(list_staff& lstaff);
 void add_student(list_student& lstudent, student* add);
 void del_student(list_student& lstudent, student* del);
+void add_staff(list_staff& lstaff, staff* add);
+void del_staff(list_staff& lstaff, staff* del);
+void save_student_to_file(student* save);
+void save_staff_to_file(staff* save);
 void add_course(list_course& lcourse, course* add);
 void del_course(list_course& lcourse, course* del);
 string convert_date_to_str(Date date);

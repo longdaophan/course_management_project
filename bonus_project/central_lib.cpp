@@ -102,6 +102,87 @@ void del_student(list_student& lstudent, student* del)
         }
     }
 }
+void save_student_to_file(student* save)
+{
+    ofstream file;
+    file.open("student.csv");
+    for (student* temp = save; temp != NULL; temp = temp->next)
+    {
+        file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << "," << temp->gender << ","
+            << temp->date_of_birth.day << "/" << temp->date_of_birth.month << "/" << temp->date_of_birth.year << "," << temp->social_ID;
+        if (temp != NULL) file << endl;
+    }
+    file.close();
+}
+void save_staff_to_file(staff* save)
+{
+    ofstream file;
+    file.open("staff.csv");
+    for (staff* temp = save; temp != NULL; temp = temp->next)
+    {
+        file << temp->no << "," << temp->staff_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << "," << temp->gender << "," 
+            << temp->date_of_birth.day << "/" << temp->date_of_birth.month << "/"<< temp->date_of_birth.year << "," << temp->social_ID;
+        if (temp != NULL) file << endl;
+    }
+    file.close();
+}
+void add_staff(list_staff& lstaff, staff* add)
+{
+    if (lstaff.head == NULL)
+        lstaff.head = lstaff.tail = add;
+    else
+    {
+        lstaff.tail->next = add;
+        add->prev = lstaff.tail;
+        lstaff.tail = add;
+    }
+    lstaff.size++;
+}
+void del_staff(list_staff& lstaff, staff* del)
+{
+    if (lstaff.head == NULL) return;
+    else if (lstaff.head->next == NULL && del == lstaff.head)// DS co 1 phan tu
+    {
+        staff* temp = lstaff.head;
+        delete temp;
+        lstaff.size--;
+        lstaff.head = lstaff.tail = NULL;
+        return;
+    }
+    else if (lstaff.head == del)// xoa dau
+    {
+        staff* temp = lstaff.head;
+        lstaff.head = temp->next;
+        delete temp;
+        lstaff.size--;
+        lstaff.head->prev = NULL;
+        return;
+    }
+    else if (lstaff.tail == del)// xoa cuoi
+    {
+        staff* temp = lstaff.tail;
+        lstaff.tail = temp->prev;
+        delete temp;
+        lstaff.size--;
+        lstaff.tail->next = NULL;
+        return;
+    }
+    else// xoa giua
+    {
+        for (staff* temp = lstaff.tail; temp != NULL; temp = temp->next)
+        {
+            if (temp == del)
+            {
+                staff* tam = temp;
+                temp->prev->next = temp->next;
+                temp->next->prev = temp->prev;
+                delete tam;
+                lstaff.size--;
+                return;
+            }
+        }
+    }
+}
 void add_course(list_course& lcourse, course* add)
 {
     if (lcourse.head == NULL)
@@ -184,8 +265,40 @@ Date convert_str_to_date(string str)
 
 void get_file_student(list_student& lstudent)
 {
-    ifstream file;
-    file.open("student.csv");
+    ifstream file("student.csv");
+    if (file.fail())
+    {
+        cout << "File mo khong thanh cong.";
+        system("pause");
+        return;
+    }
+    else
+    {
+        while (!file.eof())
+        {
+            student* temp = new student;
+            string str;
+            getline(file, str, ',');
+            if (str == "") return;
+            temp->no = stoi(str);
+            getline(file, temp->student_ID, ',');
+            getline(file, temp->password, ',');
+            getline(file, temp->first_name, ',');
+            getline(file, temp->last_name, ',');
+            getline(file, temp->gender, ',');
+            getline(file, str, ',');
+            if (str == "") return;
+            temp->date_of_birth = convert_str_to_date(str);
+            getline(file, temp->social_ID, '\n');
+            temp->next = temp->prev = NULL;
+            add_student(lstudent, temp);
+        }
+    }
+    file.close();
+}
+void get_file_staff(list_staff& lstaff)
+{
+    ifstream file("staff.csv");
     if (file.fail())
     {
         cout << "File mo khong thanh cong.";
@@ -193,24 +306,29 @@ void get_file_student(list_student& lstudent)
     }
     else
         while (!file.eof())
-    {
-        student* temp = new student;
-        file >> temp->no;
-        getline(file, temp->student_ID, ',');
-        getline(file, temp->first_name, ',');
-        getline(file, temp->last_name, ',');
-        getline(file, temp->gender, ',');
-        string str;
-        getline(file, str, ',');
-        temp->date_of_birth = convert_str_to_date(str);
-        getline(file, temp->social_ID, ',');
-        temp->next = temp->prev = NULL;
-        add_student(lstudent, temp);
-    }
+        {
+            staff* temp = new staff;
+            file >> temp->no;
+            getline(file, temp->staff_ID, ',');
+            getline(file, temp->password, ',');
+            getline(file, temp->first_name, ',');
+            getline(file, temp->last_name, ',');
+            getline(file, temp->gender, ',');
+            string str;
+            getline(file, str, ',');
+            temp->date_of_birth = convert_str_to_date(str);
+            getline(file, temp->social_ID, ',');
+            temp->next = temp->prev = NULL;
+            add_staff(lstaff, temp);
+        }
     file.close();
 }
 void display_student(list_student lstudent)
 {
-    drawbox(30, 5, 50, 20);
-    gotoxy(33, 7);
+    /*drawbox(30, 5, 50, 20);
+    gotoxy(33, 7);*/
+    for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
+    {
+        cout << temp->no << " " << temp->student_ID <<" "<<temp->password << " " << temp->first_name << " " << temp->last_name << " " << temp->gender << " " << convert_date_to_str(temp->date_of_birth) << " " << temp->social_ID << endl;
+    }
 }
