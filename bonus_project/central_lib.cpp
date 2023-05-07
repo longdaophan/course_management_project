@@ -8,21 +8,21 @@ void drawbox(int col, int row, int width, int height)
 {
     gotoxy(col, row);
     for (int i = 0; i < width; i++)
-        cout << '*';
+        cout << char(223);
     for (int i = 0; i < height; i++)
     {
         gotoxy(col + width, row + i);
-        cout << '*';
+        cout << char(223);
     }
     for (int i = width + col; i > col; i--)
     {
         gotoxy(i, row + height);
-        cout << '*';
+        cout << char(223);
     }
     for (int i = row + height; i > row; i--)
     {
         gotoxy(col, i);
-        cout << '*';
+        cout << char(223);
     }
 }
 void init_list_student(list_student& lstudent)
@@ -308,19 +308,42 @@ void get_file_staff(list_staff& lstaff)
         while (!file.eof())
         {
             staff* temp = new staff;
-            file >> temp->no;
+            string str;
+            getline(file, str, ',');
+            if (str == "") return;
+            temp->no = stoi(str);
             getline(file, temp->staff_ID, ',');
             getline(file, temp->password, ',');
             getline(file, temp->first_name, ',');
             getline(file, temp->last_name, ',');
             getline(file, temp->gender, ',');
-            string str;
             getline(file, str, ',');
+            if (str == "") return;
             temp->date_of_birth = convert_str_to_date(str);
-            getline(file, temp->social_ID, ',');
+            getline(file, temp->social_ID, '\n');
             temp->next = temp->prev = NULL;
             add_staff(lstaff, temp);
         }
+    file.close();
+}
+void save_student_to_file(list_student lstudent)
+{
+    ofstream file("student.csv");
+    for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
+    {
+        file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << "," 
+            << temp->gender << "," << convert_date_to_str(temp->date_of_birth) << "," << temp->social_ID << endl;
+    }
+    file.close();
+}
+void save_staff_to_file(list_staff lstaff)
+{
+    ofstream file("staff.csv");
+    for (staff* temp = lstaff.head; temp != NULL; temp = temp->next)
+    {
+        file << temp->no << "," << temp->staff_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
+            << temp->gender << "," << convert_date_to_str(temp->date_of_birth) << "," << temp->social_ID << endl;
+    }
     file.close();
 }
 void display_student(list_student lstudent)
@@ -329,6 +352,7 @@ void display_student(list_student lstudent)
     gotoxy(33, 7);*/
     for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
     {
-        cout << temp->no << " " << temp->student_ID <<" "<<temp->password << " " << temp->first_name << " " << temp->last_name << " " << temp->gender << " " << convert_date_to_str(temp->date_of_birth) << " " << temp->social_ID << endl;
+        cout << temp->no << " " << temp->student_ID <<" "<<temp->password << " " << temp->first_name << " " << temp->last_name << " " 
+            << temp->gender << " " << convert_date_to_str(temp->date_of_birth) << " " << temp->social_ID << endl;
     }
 }
