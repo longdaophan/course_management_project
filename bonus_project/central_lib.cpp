@@ -102,30 +102,30 @@ void del_student(list_student& lstudent, student* del)
         }
     }
 }
-void save_student_to_file(student* save)
-{
-    ofstream file;
-    file.open("student.csv");
-    for (student* temp = save; temp != NULL; temp = temp->next)
-    {
-        file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << "," << temp->gender << ","
-            << temp->date_of_birth.day << "/" << temp->date_of_birth.month << "/" << temp->date_of_birth.year << "," << temp->social_ID;
-        if (temp != NULL) file << endl;
-    }
-    file.close();
-}
-void save_staff_to_file(staff* save)
-{
-    ofstream file;
-    file.open("staff.csv");
-    for (staff* temp = save; temp != NULL; temp = temp->next)
-    {
-        file << temp->no << "," << temp->staff_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << "," << temp->gender << "," 
-            << temp->date_of_birth.day << "/" << temp->date_of_birth.month << "/"<< temp->date_of_birth.year << "," << temp->social_ID;
-        if (temp != NULL) file << endl;
-    }
-    file.close();
-}
+//void save_student_to_file(student* save)
+//{
+//    ofstream file;
+//    file.open("student.csv");
+//    for (student* temp = save; temp != NULL; temp = temp->next)
+//    {
+//        file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << "," << temp->gender << ","
+//            << temp->date_of_birth.day << "/" << temp->date_of_birth.month << "/" << temp->date_of_birth.year << "," << temp->social_ID;
+//        if (temp != NULL) file << endl;
+//    }
+//    file.close();
+//}
+//void save_staff_to_file(staff* save)
+//{
+//    ofstream file;
+//    file.open("staff.csv");
+//    for (staff* temp = save; temp != NULL; temp = temp->next)
+//    {
+//        file << temp->no << "," << temp->staff_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << "," << temp->gender << "," 
+//            << temp->date_of_birth.day << "/" << temp->date_of_birth.month << "/"<< temp->date_of_birth.year << "," << temp->social_ID;
+//        if (temp != NULL) file << endl;
+//    }
+//    file.close();
+//}
 void add_staff(list_staff& lstaff, staff* add)
 {
     if (lstaff.head == NULL)
@@ -331,8 +331,9 @@ void save_student_to_file(list_student lstudent)
     ofstream file("student.csv");
     for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
     {
-        file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << "," 
-            << temp->gender << "," << convert_date_to_str(temp->date_of_birth) << "," << temp->social_ID << endl;
+        file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
+            << temp->gender << "," << convert_date_to_str(temp->date_of_birth) << "," << temp->social_ID;
+        if (temp != NULL) file << endl;
     }
     file.close();
 }
@@ -342,7 +343,8 @@ void save_staff_to_file(list_staff lstaff)
     for (staff* temp = lstaff.head; temp != NULL; temp = temp->next)
     {
         file << temp->no << "," << temp->staff_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
-            << temp->gender << "," << convert_date_to_str(temp->date_of_birth) << "," << temp->social_ID << endl;
+            << temp->gender << "," << convert_date_to_str(temp->date_of_birth) << "," << temp->social_ID;
+        if (temp != NULL) file << endl;
     }
     file.close();
 }

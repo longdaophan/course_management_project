@@ -7,6 +7,7 @@
 #include <fstream>
 #include <stdio.h>
 #include <conio.h>
+#include <direct.h>
 
 using namespace std;
 struct Date
@@ -66,9 +67,10 @@ struct course
 	string class_name;
 	string teacher_name;
 	int number_of_credit;
-	int max_number = 50;
+	int max_number;
+	int number_of_enroller;
 	string week_day;
-	string session[4];
+	string session;
 	course* prev;
 	course* next;
 };
@@ -109,3 +111,4 @@ void del_course(list_course& lcourse, course* del);
 string convert_date_to_str(Date date);
 Date convert_str_to_date(string str);
 void display_student(list_student lstudent);
+void create_new_academic_year();
