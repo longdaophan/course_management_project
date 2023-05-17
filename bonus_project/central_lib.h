@@ -8,8 +8,13 @@
 #include <stdio.h>
 #include <conio.h>
 #include <direct.h>
+#include <errno.h>
+#include <filesystem>
+
+
 
 using namespace std;
+//using namespace std::filesystem;
 struct Date
 {
 	int day;
@@ -98,14 +103,15 @@ void init_list_student(list_student &lstudent);
 void init_list_staff(list_staff &lstaff);
 void init_list_course(list_course &lcourse);
 void init_list_class(list_class& lclass);
-void get_file_student(list_student& lstudent);
-void get_file_staff(list_staff& lstaff);
+void get_file_student(list_student& lstudent, string path);
+void get_file_staff(list_staff& lstaff, string path);
+student* enter_infor_for_student();
 void add_student(list_student& lstudent, student* add);
 void del_student(list_student& lstudent, student* del);
 void add_staff(list_staff& lstaff, staff* add);
 void del_staff(list_staff& lstaff, staff* del);
-void save_student_to_file(list_student lstudent);
-void save_staff_to_file(list_staff lstaff);
+void save_student_to_file(list_student lstudent, string path);
+void save_staff_to_file(list_staff lstaff, string path);
 void add_course(list_course& lcourse, course* add);
 void del_course(list_course& lcourse, course* del);
 string convert_date_to_str(Date date);

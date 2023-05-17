@@ -5,8 +5,8 @@ string check_password(string id, string password)
 	list_staff lstaff;
 	init_list_staff(lstaff);
 	init_list_student(lstudent);
-	get_file_staff(lstaff);
-	get_file_student(lstudent);
+	get_file_staff(lstaff,"staff.csv");
+	get_file_student(lstudent,"student.csv");
 	student* std = lstudent.head;
 	staff* sta = lstaff.head;
 	while (std != NULL)
@@ -84,39 +84,41 @@ void student_menu(student* student, list_student lstudent)
 	int pos = 11;
 	int x;
 	int sl = 0;
-	do
-	{
-		system("cls");
-		gotoxy(55, 4);
-		cout << "HCMUS";
-		gotoxy(45, 6);
-		cout << "Welcome: " << student->first_name << " " << student->last_name;
-		drawbox(33, 5, 53, 20);
-		gotoxy(40, 11);
-		cout << "PROFILE";
-		gotoxy(40, 13);
-		cout << "Academic Results";
-		gotoxy(40, 15);
-		cout << "Course Registration";
-		gotoxy(40, 17);
-		cout << "Change Password";
-		gotoxy(38, 22);
-		cout << "LOG OUT";
-		x= control(pos,sl, 4);
-		sl++;
-	} while (x!=0);
-	switch (pos)
-	{
-	case 11:
-		profile(student, lstudent);
-		break;
-	case 17:
-		change_password(student, lstudent);
-		break;
-	case 22:
-		login_system();
-		break;
-	}
+	do {
+		do
+		{
+			system("cls");
+			gotoxy(55, 4);
+			cout << "HCMUS";
+			gotoxy(45, 6);
+			cout << "Welcome: " << student->first_name << " " << student->last_name;
+			drawbox(33, 5, 53, 20);
+			gotoxy(40, 11);
+			cout << "PROFILE";
+			gotoxy(40, 13);
+			cout << "Academic Results";
+			gotoxy(40, 15);
+			cout << "Course Registration";
+			gotoxy(40, 17);
+			cout << "Change Password";
+			gotoxy(38, 22);
+			cout << "LOG OUT";
+			x = control(pos, sl, 4);
+			sl++;
+		} while (x != 0);
+		switch (pos)
+		{
+		case 11:
+			profile(student, lstudent);
+			break;
+		case 17:
+			change_password(student, lstudent);
+			break;
+		case 22:
+			login_system();
+			break;
+		}
+	} while (pos != 22);
 }
 void change_password(student* student, list_student lstudent)
 {
@@ -181,7 +183,7 @@ void change_password(student* student, list_student lstudent)
 	gotoxy(58, 15);
 	getline(cin, new_password);
 	student->password = new_password;
-	save_student_to_file(lstudent);
+	save_student_to_file(lstudent, "student.csv");
 	system("cls");
 	gotoxy(40, 13);
 	cout << "Da luu mat khau, vui long dang nhap lai.";
@@ -251,7 +253,7 @@ void change_password(staff* staff, list_staff lstaff)
 	gotoxy(58, 15);
 	getline(cin, new_password);
 	staff->password = new_password;
-	save_staff_to_file(lstaff);
+	save_staff_to_file(lstaff,"staff.csv");
 	system("cls");
 	gotoxy(40, 13);
 	cout << "Da luu mat khau, vui long dang nhap lai.";
@@ -299,7 +301,7 @@ void profile(staff* staff, list_staff lstaff)
 	gotoxy(42, 11);
 	cout << "Ho va ten: " << staff->first_name << " " << staff->last_name;
 	gotoxy(42, 13);
-	cout << "MSSV(ID): " << staff->staff_ID;
+	cout << "ID: " << staff->staff_ID;
 	gotoxy(42, 15);
 	cout << "Ngay sinh: " << convert_date_to_str(staff->date_of_birth);
 	gotoxy(42, 17);
@@ -314,103 +316,300 @@ void profile(staff* staff, list_staff lstaff)
 		break;
 	}
 }
-void manage_academic_years(staff* staff, list_staff lstaff, list_student lstudent, list_class lclass, list_course lcourse)
+void manage_academic_years(staff* staff, list_staff lstaff/*, list_student lstudent, list_class lclass, list_course lcourse*/)
 {
 	int pos = 11;
 	int x;
 	int sl = 0;
 	do
 	{
+		do
+		{
+			system("cls");
+			gotoxy(55, 4);
+			cout << "HCMUS";
+			drawbox(33, 5, 53, 20);
+			gotoxy(50, 7);
+			cout << "MANAGE ACADEMIC YEARS";
+			gotoxy(45, 11);
+			cout << "View and modify academic years";
+			gotoxy(45, 13);
+			cout << "Create new academic year";
+			gotoxy(45, 15);
+			cout << "Add classes";
+			gotoxy(45, 17);
+			cout << "Add semesters";
+			gotoxy(38, 22);
+			cout << "BACK";
+			x = control(pos, sl, 4);
+			sl++;
+		} while (x != 0);
+		switch (pos)
+		{
+		case 11:
+			view_academic_years();
+			break;
+		case 13:
+			create_new_academic_year();
+			break;
+		case 15: 
+			add_classes();
+			break;
+		case 22:
+			staff_menu(staff, lstaff);
+			break;
+		}
+	} while (pos != 22);
+}
+void create_new_academic_year()
+{
+	bool ks = true;
+	int key;
+	while (ks)
+	{
+		string year, path;
+		system("cls");
+		gotoxy(55, 4);
+		cout << "HCMUS";
+		drawbox(33, 5, 53, 20);
+		gotoxy(40, 11);
+		cout << "Nhap nam hoc muon tao: ";
+		gotoxy(38, 22);
+		cout << "BACK";
+		key = _getch();
+		switch (key)
+		{
+		case 13:
+			return;
+			break;
+		case 72:
+		case 80:
+			break;
+		}
+		gotoxy(62, 11);
+		getline(cin, year);
+		path = "../academic_years/" + year;
+		int kt = _mkdir(path.c_str());
+		if (kt == 0)
+		{
+			system("cls");
+			gotoxy(40, 13);
+			cout << "Nam hoc moi da duoc tao.";
+			Sleep(2000);
+			break;
+		}
+		else
+		{
+			system("cls");
+			gotoxy(50, 13);
+			cout << strerror(errno);
+			Sleep(2000);
+			key = _getch();
+			switch (key)
+			{
+			case 13:
+				return;
+				break;
+			case 72:
+			case 80:
+				break;
+			}
+		}
+	}
+}
+void view_academic_years()
+{
+	/*string path = "../academic_years";
+	for (const auto& entry : directory_iterator(path))
+	{
+		cout << entry.path() << endl;
+	}*/
+	/*ifstream file("../academic_years");
+	if (file.fail())
+	{
+		system("cls");
+		gotoxy(40, 13);
+		cout << "Mo file khong thanh cong.";
+		Sleep(2000);
+		return;
+	}
+		int pos = 11;
+		string str;
 		system("cls");
 		gotoxy(55, 4);
 		cout << "HCMUS";
 		drawbox(33, 5, 53, 20);
 		gotoxy(55, 7);
-		cout << "MANAGE ACADEMIC YEARS";
-		gotoxy(45, 11);
-		cout << "View academic years";
-		gotoxy(45, 13);
-		cout << "Create new academic year";
-		gotoxy(38, 22);
-		cout << "BACK";
-		x = control(pos, sl, 2);
-		sl++;
-	} while (x != 0);
-	switch (pos)
+		cout << "VIEW ACADEMIC YEARS";
+		while (!file.eof())
+		{
+			getline(file, str);
+			gotoxy(45, pos);
+			pos += 2;
+			cout << str;
+	}*/
+
+
+}
+void add_students_manually(list_student &lstudent_for_new_class)
+{
+	int n;
+	do
 	{
-	case 11:
-		break;
-	case 13:
-		break;
-	case 22:
-		staff_menu(staff, lstaff);
-		break;
+		cout << "Nhap so luong sinh vien:";
+		cin >> n;
+	} while (n < 1);
+	cin.ignore();
+	for (int i = 0; i < n; i++)
+	{
+		student* std = enter_infor_for_student();
+		add_student(lstudent_for_new_class, std);
 	}
 }
-void create_new_academic_year()
+void add_students_by_importing_file(list_student& lstudent_for_new_class);
+void add_classes()
 {
-	string year, class_name, course_name, path;
-	path = "../academic_years/" + year + "/Classes/" + class_name;
-	_mkdir(path.c_str());
-	system("cls");
-	gotoxy(55, 4);
-	cout << "HCMUS";
-	drawbox(33, 5, 53, 20);
-	gotoxy(40, 11);
-	cout << "Nhap nam hoc: ";
-	gotoxy(40, 13);
-	cout << "Nhap ten lop: ";
-	gotoxy(38, 22);
-	cout << "BACK";
-	gotoxy(55, 11);
-	getline(cin, year);
-	/*gotoxy(55, 11);
-	getline(cin, class_name);*/
-	path = "../academic_years/" + year;
-	_mkdir(path.c_str());
-
-
+	bool ks = true;
+	int key;
+	string year, path, class_name;
+	while (ks)
+	{
+		bool ks = true;
+		system("cls");
+		gotoxy(55, 4);
+		cout << "HCMUS";
+		drawbox(33, 5, 53, 20);
+		gotoxy(40, 11);
+		cout << "Nhap nam hoc : ";
+		gotoxy(40, 13);
+		cout << "Nhap ten lop: ";
+		gotoxy(38, 22);
+		cout << "BACK";
+		key = _getch();
+		switch (key)
+		{
+		case 13:
+			return;
+			break;
+		case 72:
+		case 80:
+			break;
+		}
+		gotoxy(54, 11);
+		getline(cin, year);
+		gotoxy(53, 13);
+		getline(cin, class_name);
+		path = "../academic_years/" + year + "/" + class_name;
+		int kt = _mkdir(path.c_str());
+		if (kt == 0)
+		{
+			system("cls");
+			gotoxy(40, 13);
+			cout << "Lop hoc moi da duoc tao.";
+			Sleep(2000);
+			break;
+		}
+		else
+		{
+			system("cls");
+			gotoxy(50, 13);
+			cout << strerror(errno);
+			Sleep(2000);
+			key = _getch();
+			switch (key)
+			{
+			case 13:
+				return;
+				break;
+			case 72:
+			case 80:
+				break;
+			}
+		}
+	}
+	int pos = 11;
+	int x;
+	int sl = 0;
+	list_student lstudent_for_new_class;
+	init_list_student(lstudent_for_new_class);
+	do
+	{
+		do
+		{
+			system("cls");
+			gotoxy(55, 4);
+			cout << "HCMUS";
+			drawbox(33, 5, 53, 20);
+			gotoxy(50, 7);
+			cout << "ADD STUDENT TO NEWLY-CREATED CLASS";
+			gotoxy(45, 11);
+			cout << "Add students manually";
+			gotoxy(45, 13);
+			cout << "Add students by importing file";
+			gotoxy(38, 22);
+			cout << "BACK";
+			x = control(pos, sl, 2);
+			sl++;
+		} while (x != 0);
+		switch (pos)
+		{
+		case 11:
+			add_students_manually(lstudent_for_new_class);
+			break;
+		case 13:
+			//add_students_by_importing_file(lstudent_for_new_class);
+			break;
+		case 22:
+			break;
+		}
+	} while (pos != 22);
+	save_student_to_file(lstudent_for_new_class, path + "/" + class_name + ".csv");
 }
 void staff_menu(staff* staff, list_staff lstaff)
 {
 	int pos = 9;
 	int x;
 	int sl = 0;
-	do
-	{
-		system("cls");
-		gotoxy(55, 4);
-		cout << "HCMUS";
-		gotoxy(45, 6);
-		cout << "Welcome: " << staff->first_name << " " << staff->last_name;
-		drawbox(33, 5, 53, 20);
-		gotoxy(40, 9);
-		cout << "PROFILE";
-		gotoxy(40, 11);
-		cout << "Manage academic years";
-		gotoxy(40, 13);
-		cout << "Course Management";
-		gotoxy(40, 15);
-		cout << "Student Management";
-		gotoxy(40, 17);
-		cout << "Change Password";
-		gotoxy(38, 22);
-		cout << "LOG OUT";
-		x = control(pos, sl, 5);
-		sl++;
-	} while (x != 0);
-	switch (pos)
-	{
-	case 9:
-		profile(staff, lstaff);
-		break;
-	case 17:
-		change_password(staff, lstaff);
-		break;
-	case 22:
-		login_system();
-		break;
-	}
+	do {
+		do
+		{
+			system("cls");
+			gotoxy(55, 4);
+			cout << "HCMUS";
+			gotoxy(45, 6);
+			cout << "Welcome: " << staff->first_name << " " << staff->last_name;
+			drawbox(33, 5, 53, 20);
+			gotoxy(40, 9);
+			cout << "PROFILE";
+			gotoxy(40, 11);
+			cout << "Manage academic years";
+			gotoxy(40, 13);
+			cout << "Course Management";
+			gotoxy(40, 15);
+			cout << "Student Management";
+			gotoxy(40, 17);
+			cout << "Change Password";
+			gotoxy(38, 22);
+			cout << "LOG OUT";
+			x = control(pos, sl, 5);
+			sl++;
+		} while (x != 0);
+		switch (pos)
+		{
+		case 9:
+			profile(staff, lstaff);
+			break;
+		case 11:
+			manage_academic_years(staff, lstaff);
+			break;
+		case 17:
+			change_password(staff, lstaff);
+			break;
+		case 22:
+			login_system();
+			break;
+		}
+	} while (pos != 22);
 }
 void login_system()
 {
@@ -418,8 +617,8 @@ void login_system()
 	list_staff lstaff;
 	init_list_staff(lstaff);
 	init_list_student(lstudent);
-	get_file_staff(lstaff);
-	get_file_student(lstudent);
+	get_file_staff(lstaff, "staff.csv");
+	get_file_student(lstudent,"student.csv");
 	student* std = lstudent.head;
 	staff* sta = lstaff.head;
 	string temp;

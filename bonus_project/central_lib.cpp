@@ -57,6 +57,23 @@ void add_student(list_student& lstudent, student* add)
     }
     lstudent.size++;
 }
+student* enter_infor_for_student()
+{
+    student* temp = new student;
+    string str;
+    getline(cin, str);
+    temp->no = stoi(str);
+    getline(cin, temp->student_ID);
+    getline(cin, temp->password);
+    getline(cin, temp->first_name);
+    getline(cin, temp->last_name);
+    getline(cin, temp->gender);
+    getline(cin, str);
+    temp->date_of_birth = convert_str_to_date(str);
+    getline(cin, temp->social_ID);
+    temp->next = temp->prev = NULL;
+    return temp;
+}
 void del_student(list_student& lstudent, student* del)
 {
     if (lstudent.head == NULL) return;
@@ -263,9 +280,9 @@ Date convert_str_to_date(string str)
     return date;
 }
 
-void get_file_student(list_student& lstudent)
+void get_file_student(list_student& lstudent, string path)
 {
-    ifstream file("student.csv");
+    ifstream file(path);
     if (file.fail())
     {
         cout << "File mo khong thanh cong.";
@@ -296,9 +313,9 @@ void get_file_student(list_student& lstudent)
     }
     file.close();
 }
-void get_file_staff(list_staff& lstaff)
+void get_file_staff(list_staff& lstaff, string path)
 {
-    ifstream file("staff.csv");
+    ifstream file(path);
     if (file.fail())
     {
         cout << "File mo khong thanh cong.";
@@ -326,9 +343,9 @@ void get_file_staff(list_staff& lstaff)
         }
     file.close();
 }
-void save_student_to_file(list_student lstudent)
+void save_student_to_file(list_student lstudent, string path)
 {
-    ofstream file("student.csv");
+    ofstream file(path);
     for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
     {
         file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
@@ -337,9 +354,9 @@ void save_student_to_file(list_student lstudent)
     }
     file.close();
 }
-void save_staff_to_file(list_staff lstaff)
+void save_staff_to_file(list_staff lstaff, string path)
 {
-    ofstream file("staff.csv");
+    ofstream file(path);
     for (staff* temp = lstaff.head; temp != NULL; temp = temp->next)
     {
         file << temp->no << "," << temp->staff_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
