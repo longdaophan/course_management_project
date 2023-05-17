@@ -16,3 +16,5 @@ void view_academic_years();
 void add_classes();
 void add_students_manually(list_student &lstudent_for_new_class);
 void add_students_by_importing_file(list_student& lstudent_for_new_class);
+void modify_classes();
+void delete_student(list_student &lstudent );

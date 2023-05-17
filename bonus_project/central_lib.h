@@ -9,7 +9,6 @@
 #include <conio.h>
 #include <direct.h>
 #include <errno.h>
-#include <filesystem>
 
 
 
@@ -103,15 +102,15 @@ void init_list_student(list_student &lstudent);
 void init_list_staff(list_staff &lstaff);
 void init_list_course(list_course &lcourse);
 void init_list_class(list_class& lclass);
-void get_file_student(list_student& lstudent, string path);
-void get_file_staff(list_staff& lstaff, string path);
-student* enter_infor_for_student();
+bool get_file_student(list_student& lstudent, string path);
+bool get_file_staff(list_staff& lstaff, string path);
+student* enter_infor_for_student(int &pos);
 void add_student(list_student& lstudent, student* add);
 void del_student(list_student& lstudent, student* del);
 void add_staff(list_staff& lstaff, staff* add);
 void del_staff(list_staff& lstaff, staff* del);
-void save_student_to_file(list_student lstudent, string path);
-void save_staff_to_file(list_staff lstaff, string path);
+bool save_student_to_file(list_student lstudent, string path);
+bool save_staff_to_file(list_staff lstaff, string path);
 void add_course(list_course& lcourse, course* add);
 void del_course(list_course& lcourse, course* del);
 string convert_date_to_str(Date date);

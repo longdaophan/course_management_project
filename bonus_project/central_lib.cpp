@@ -57,19 +57,44 @@ void add_student(list_student& lstudent, student* add)
     }
     lstudent.size++;
 }
-student* enter_infor_for_student()
+student* enter_infor_for_student(int &pos)
 {
+    drawbox(15, 5, 95, 2);
+    gotoxy(16, 6);
+    cout << " No |";
+    gotoxy(22, 6);
+    cout <<"  MSSV   |";
+    gotoxy(33, 6);
+    cout << " Password |";
+    gotoxy(45, 6);
+    cout << " First name |";
+    gotoxy(59, 6);
+    cout<<" Last name |";
+    gotoxy(72, 6);
+    cout << " Gender |";
+    gotoxy(82, 6);
+    cout << " Date of birth |";
+    gotoxy(99, 6);
+    cout << " Social ID ";
     student* temp = new student;
     string str;
+    gotoxy(16, pos);
     getline(cin, str);
     temp->no = stoi(str);
+    gotoxy(22, pos);
     getline(cin, temp->student_ID);
+    gotoxy(33, pos);
     getline(cin, temp->password);
+    gotoxy(45, pos);
     getline(cin, temp->first_name);
+    gotoxy(59, pos);
     getline(cin, temp->last_name);
+    gotoxy(72, pos);
     getline(cin, temp->gender);
+    gotoxy(82, pos);
     getline(cin, str);
     temp->date_of_birth = convert_str_to_date(str);
+    gotoxy(99, pos++);
     getline(cin, temp->social_ID);
     temp->next = temp->prev = NULL;
     return temp;
@@ -280,14 +305,16 @@ Date convert_str_to_date(string str)
     return date;
 }
 
-void get_file_student(list_student& lstudent, string path)
+bool get_file_student(list_student& lstudent, string path)
 {
     ifstream file(path);
     if (file.fail())
     {
+        system("cls");
+        gotoxy(40, 13);
         cout << "File mo khong thanh cong.";
-        system("pause");
-        return;
+        Sleep(2000);
+        return false;
     }
     else
     {
@@ -296,7 +323,7 @@ void get_file_student(list_student& lstudent, string path)
             student* temp = new student;
             string str;
             getline(file, str, ',');
-            if (str == "") return;
+            if (str == "") return true;
             temp->no = stoi(str);
             getline(file, temp->student_ID, ',');
             getline(file, temp->password, ',');
@@ -304,7 +331,7 @@ void get_file_student(list_student& lstudent, string path)
             getline(file, temp->last_name, ',');
             getline(file, temp->gender, ',');
             getline(file, str, ',');
-            if (str == "") return;
+            if (str == "") return true;
             temp->date_of_birth = convert_str_to_date(str);
             getline(file, temp->social_ID, '\n');
             temp->next = temp->prev = NULL;
@@ -312,14 +339,18 @@ void get_file_student(list_student& lstudent, string path)
         }
     }
     file.close();
+    return true;
 }
-void get_file_staff(list_staff& lstaff, string path)
+bool get_file_staff(list_staff& lstaff, string path)
 {
     ifstream file(path);
     if (file.fail())
     {
+        system("cls");
+        gotoxy(40, 13);
         cout << "File mo khong thanh cong.";
-        return;
+        Sleep(2000);
+        return false;
     }
     else
         while (!file.eof())
@@ -327,7 +358,7 @@ void get_file_staff(list_staff& lstaff, string path)
             staff* temp = new staff;
             string str;
             getline(file, str, ',');
-            if (str == "") return;
+            if (str == "") return true;
             temp->no = stoi(str);
             getline(file, temp->staff_ID, ',');
             getline(file, temp->password, ',');
@@ -335,17 +366,27 @@ void get_file_staff(list_staff& lstaff, string path)
             getline(file, temp->last_name, ',');
             getline(file, temp->gender, ',');
             getline(file, str, ',');
-            if (str == "") return;
+            if (str == "") return true;
             temp->date_of_birth = convert_str_to_date(str);
             getline(file, temp->social_ID, '\n');
             temp->next = temp->prev = NULL;
             add_staff(lstaff, temp);
         }
     file.close();
+    return true;
 }
-void save_student_to_file(list_student lstudent, string path)
+bool save_student_to_file(list_student lstudent, string path)
 {
     ofstream file(path);
+    if (file.fail())
+    {
+        system("cls");
+        gotoxy(40, 13);
+        cout << "File mo khong thanh cong.";
+        Sleep(2000);
+        return false;
+    }
+    else
     for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
     {
         file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
@@ -353,10 +394,20 @@ void save_student_to_file(list_student lstudent, string path)
         if (temp != NULL) file << endl;
     }
     file.close();
+    return true;
 }
-void save_staff_to_file(list_staff lstaff, string path)
+bool save_staff_to_file(list_staff lstaff, string path)
 {
     ofstream file(path);
+    if (file.fail())
+    {
+        system("cls");
+        gotoxy(40, 13);
+        cout << "File mo khong thanh cong.";
+        Sleep(2000);
+        return false;
+    }
+    else
     for (staff* temp = lstaff.head; temp != NULL; temp = temp->next)
     {
         file << temp->no << "," << temp->staff_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
@@ -364,14 +415,39 @@ void save_staff_to_file(list_staff lstaff, string path)
         if (temp != NULL) file << endl;
     }
     file.close();
+    return true;
 }
 void display_student(list_student lstudent)
 {
-    /*drawbox(30, 5, 50, 20);
-    gotoxy(33, 7);*/
+    int pos = 8;
+    system("cls");
+    drawbox(20, 5, 83, 2);
+    gotoxy(21, 6);
+    cout << " No |";
+    gotoxy(28, 6);
+    cout << "  MSSV   |";
+    gotoxy(38, 6);
+    cout << "      Full name       |";
+    gotoxy(62, 6);
+    cout << " Gender  |";
+    gotoxy(73, 6);
+    cout << " Date of birth |";
+    gotoxy(90, 6);
+    cout << "  Social ID  ";
     for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
     {
-        cout << temp->no << " " << temp->student_ID <<" "<<temp->password << " " << temp->first_name << " " << temp->last_name << " " 
-            << temp->gender << " " << convert_date_to_str(temp->date_of_birth) << " " << temp->social_ID << endl;
+        gotoxy(21, pos);
+        cout << temp->no;
+        gotoxy(28, pos);
+        cout << temp->student_ID;
+        gotoxy(40, pos);
+        cout << temp->first_name << " " << temp->last_name;
+        gotoxy(64, pos);
+        cout << temp->gender;
+        gotoxy(75, pos);
+        cout << convert_date_to_str(temp->date_of_birth);
+        gotoxy(92, pos++);
+        cout << temp->social_ID;
     }
+    gotoxy(0, pos + 2);
 }
