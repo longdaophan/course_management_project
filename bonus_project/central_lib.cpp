@@ -396,6 +396,22 @@ bool save_student_to_file(list_student lstudent, string path)
     file.close();
     return true;
 }
+bool update_student_to_file(list_student lstudent, string path)
+{
+    ofstream file;
+    file.open(path, ios::app);
+    if (file.fail())
+        return false;
+    else
+        for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
+        {
+            file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
+                << temp->gender << "," << convert_date_to_str(temp->date_of_birth) << "," << temp->social_ID;
+            if (temp != NULL) file << endl;
+        }
+    file.close();
+    return true;
+}
 bool save_staff_to_file(list_staff lstaff, string path)
 {
     ofstream file(path);

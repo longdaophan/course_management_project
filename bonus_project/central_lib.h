@@ -110,6 +110,7 @@ void del_student(list_student& lstudent, student* del);
 void add_staff(list_staff& lstaff, staff* add);
 void del_staff(list_staff& lstaff, staff* del);
 bool save_student_to_file(list_student lstudent, string path);
+bool update_student_to_file(list_student lstudent, string path);
 bool save_staff_to_file(list_staff lstaff, string path);
 void add_course(list_course& lcourse, course* add);
 void del_course(list_course& lcourse, course* del);
