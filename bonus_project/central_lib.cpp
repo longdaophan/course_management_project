@@ -99,6 +99,43 @@ student* enter_infor_for_student(int &pos)
     temp->next = temp->prev = NULL;
     return temp;
 }
+course* enter_infor_for_course(int &pos)
+{
+    drawbox(10, 5, 105, 2);
+    gotoxy(11, 6);
+    cout << " Course id |";
+    gotoxy(24, 6);
+    cout << "      Course name     |";
+    gotoxy(48, 6);
+    cout << " Class name |";
+    gotoxy(62, 6);
+    cout << "   Teacher name   |";
+    gotoxy(81, 6);
+    cout << " Credit |";
+    gotoxy(91, 6);
+    cout << "   Day   |";
+    gotoxy(102, 6);
+    cout << " Session ";
+    course* crs = new course;
+    string str;
+    gotoxy(11, pos);
+    getline(cin, crs->course_id);
+    gotoxy(24, pos);
+    getline(cin, crs->course_name);
+    gotoxy(48, pos);
+    getline(cin, crs->class_name);
+    gotoxy(62, pos);
+    getline(cin, crs->teacher_name);
+    gotoxy(82, pos);
+    getline(cin, str);
+    crs->number_of_credit = stoi(str);
+    gotoxy(92, pos);
+    getline(cin, crs->week_day);
+    gotoxy(101, pos++);
+    getline(cin, crs->session);
+    crs->next = crs->prev = NULL;
+    return crs;
+}
 void del_student(list_student& lstudent, student* del)
 {
     if (lstudent.head == NULL) return;
@@ -130,7 +167,7 @@ void del_student(list_student& lstudent, student* del)
     }
     else// xoa giua
     {
-        for (student* temp = lstudent.tail; temp != NULL; temp = temp->next)
+        for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
         {
             if (temp == del)
             {
@@ -211,7 +248,7 @@ void del_staff(list_staff& lstaff, staff* del)
     }
     else// xoa giua
     {
-        for (staff* temp = lstaff.tail; temp != NULL; temp = temp->next)
+        for (staff* temp = lstaff.head; temp != NULL; temp = temp->next)
         {
             if (temp == del)
             {
@@ -268,7 +305,7 @@ void del_course(list_course& lcourse, course* del)
     }
     else// xoa giua
     {
-        for (course* temp = lcourse.tail; temp != NULL; temp = temp->next)
+        for (course* temp = lcourse.head; temp != NULL; temp = temp->next)
         {
             if (temp == del)
             {
@@ -374,6 +411,53 @@ bool get_file_staff(list_staff& lstaff, string path)
         }
     file.close();
     return true;
+    
+}
+bool get_file_course(list_course& lcourse, string path, string& length_of_course)
+{
+    ifstream file(path);
+    if (file.fail())
+    {
+        system("cls");
+        gotoxy(40, 13);
+        cout << "File mo khong thanh cong.";
+        Sleep(2000);
+        return false;
+    }
+    else
+    {
+        getline(file, length_of_course);
+        while (!file.eof())
+        {
+            course* temp = new course;
+            string str;
+            getline(file, temp->course_id, ',');
+            getline(file, temp->course_name, ',');
+            getline(file, temp->class_name, ',');
+            getline(file, temp->teacher_name, ',');
+            cout << temp->teacher_name;
+            getline(file, str, ',');
+            cout << str;
+            if (str == "")
+                return true;
+            temp->number_of_credit = stoi(str);
+           
+            getline(file, str, ',');
+            if (str == "")
+                return true;
+            temp->max_number = stoi(str);
+            getline(file, str, ',');
+            if (str == "")
+                return true;
+            temp->number_of_enroller = stoi(str);
+            getline(file, temp->week_day, ',');
+            getline(file, temp->session, '\n');
+            temp->next = temp->prev = NULL;
+            add_course(lcourse, temp);
+        }
+    }
+    file.close();
+    return true;
 }
 bool save_student_to_file(list_student lstudent, string path)
 {
@@ -433,6 +517,30 @@ bool save_staff_to_file(list_staff lstaff, string path)
     file.close();
     return true;
 }
+bool save_course_to_file(list_course lcourse, string path, string duration)
+{
+    ofstream file(path);
+    if (file.fail())
+    {
+        system("cls");
+        gotoxy(40, 13);
+        cout << "File mo khong thanh cong.";
+        Sleep(2000);
+        return false;
+    }
+    else
+    {
+        file << duration << endl;
+        for (course* temp = lcourse.head; temp != NULL; temp = temp->next)
+        {
+            file << temp->course_id << "," << temp->course_name << "," << temp->class_name << "," << temp->teacher_name << "," << temp->number_of_credit << "," << temp->max_number << ","
+                << temp->number_of_enroller << "," << temp->week_day << "," << temp->session;
+            if (temp != NULL) file << endl;
+        }
+    }
+    file.close();
+    return true;
+}
 void display_student(list_student lstudent)
 {
     int pos = 8;
@@ -464,6 +572,51 @@ void display_student(list_student lstudent)
         cout << convert_date_to_str(temp->date_of_birth);
         gotoxy(92, pos++);
         cout << temp->social_ID;
+    }
+    gotoxy(0, pos + 2);
+}
+void display_course(list_course lcourse)
+{
+    int pos = 8;
+    drawbox(2, 5, 115, 2);
+    gotoxy(3, 6);
+    cout << "   Id   |";
+    gotoxy(13, 6);
+    cout << "      Course name     |";
+    gotoxy(37, 6);
+    cout << "  Class  |";
+    gotoxy(48, 6);
+    cout << "   Teacher name   |";
+    gotoxy(68, 6);
+    cout << "Credit|";
+    gotoxy(76, 6);
+    cout << "Max num|";
+    gotoxy(85, 6);
+    cout << "Enrollers|";
+    gotoxy(96, 6);
+    cout << "   Day   |";
+    gotoxy(106, 6);
+    cout << "Session";
+    for (course* temp = lcourse.head; temp != NULL; temp = temp->next)
+    {
+        gotoxy(3, pos);
+        cout << temp->course_id;
+        gotoxy(13, pos);
+        cout << temp->course_name;
+        gotoxy(37, pos);
+        cout << temp->class_name;
+        gotoxy(48, pos);
+        cout << temp->teacher_name;
+        gotoxy(68, pos);
+        cout << temp->number_of_credit;
+        gotoxy(76, pos);
+        cout << temp->max_number;
+        gotoxy(85, pos);
+        cout << temp->number_of_enroller;
+        gotoxy(96, pos);
+        cout << temp->week_day;
+        gotoxy(106, pos++);
+        cout << temp->session;
     }
     gotoxy(0, pos + 2);
 }
