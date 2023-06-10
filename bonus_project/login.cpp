@@ -977,6 +977,7 @@ void create_new_semester()
 {
 	int key;
 	string year, path, number, start, end;
+	Date date;
 	while (true)
 	{
 		system("cls");
@@ -1005,10 +1006,20 @@ void create_new_semester()
 		}
 		gotoxy(61, 11);
 		getline(cin, number);
-		gotoxy(60, 13);
-		getline(cin, start);
-		gotoxy(61, 15);
-		getline(cin, end);
+		do
+		{
+			gotoxy(60, 13);
+			getline(cin, start);
+			date = convert_str_to_date(start);
+		} while (!check_day_of_birth(date));
+		start = convert_date_to_str(date);
+		do
+		{
+			gotoxy(61, 15);
+			getline(cin, end);
+			date = convert_str_to_date(end);
+		} while (!check_day_of_birth(date));
+		end = convert_date_to_str(date);
 		gotoxy(66, 17);
 		getline(cin, year);
 		path = "../academic_years/" + year+"/Semester "+number;
@@ -1039,10 +1050,6 @@ void create_new_semester()
 			}
 		}
 	}
-	Date date = convert_str_to_date(start);
-	start=convert_date_to_str(date);
-	date = convert_str_to_date(end);
-	end = convert_date_to_str(date);
 	ofstream file;
 	file.open(path + "/courses.csv");
 	string temp = start + " -- " + end;
@@ -1094,7 +1101,7 @@ void add_a_course(list_course& lcourse, string path, string duration)
 	course* crs = enter_infor_for_course(pos);
 	system("cls");
 	gotoxy(40, 13);
-	cout << "Da them mot khoa hoc thanh cong, hay them file hoc sinh.";
+	cout << "Hay them file hoc sinh.";
 	Sleep(2000);
 	system("cls");
 	list_student lstudent;
@@ -1106,7 +1113,8 @@ void add_a_course(list_course& lcourse, string path, string duration)
 		sl++;
 	crs->number_of_enroller = sl;
 	add_course(lcourse, crs);
-	if (save_course_to_file(lcourse, path + "/courses.csv", duration))
+	courses_of_each_student(lstudent, path, lcourse, duration);
+	if (update_course_to_file(lcourse, path + "/courses.csv", duration))
 	{
 		system("cls");
 		gotoxy(40, 13);
@@ -1137,7 +1145,13 @@ bool view_list_of_courses(string path)
 		}
 	}
 	else
+	{
+		system("cls");
+		gotoxy(40, 13);
+		cout << "File mo khong thanh cong.";
+		Sleep(2000);
 		return false;
+	}
 	
 }
 void view_list_of_courses_in_course_management_menu()
@@ -1173,6 +1187,13 @@ void view_list_of_courses_in_course_management_menu()
 		path = "../academic_years/" + year + "/Semester " + number;
 		if (view_list_of_courses(path + "/courses.csv"))
 			break;
+		else
+		{
+			system("cls");
+			gotoxy(40, 13);
+			cout << "File mo khong thanh cong.";
+			Sleep(2000);
+		}
 	}
 }
 void modify_course()
@@ -1197,10 +1218,12 @@ void modify_course()
 			gotoxy(45, 15);
 			cout << "Remove a student from a course";
 			gotoxy(45, 17);
+			cout << "add a course";
+			gotoxy(45, 19);
 			cout << "Delete a course";
 			gotoxy(38, 22);
 			cout << "BACK";
-			x = control(pos, sl, 4);
+			x = control(pos, sl, 5);
 			sl++;
 		} while (x != 0);
 		switch (pos)
@@ -1215,6 +1238,9 @@ void modify_course()
 			remove_a_student_from_the_course();
 			break;
 		case 17:
+			add_courses();
+			break;
+		case 19:
 			delete_a_course();
 			break;
 		case 22:
@@ -1259,6 +1285,13 @@ void update_course_information()
 		path = "../academic_years/" + year + "/Semester " + number;
 		if (get_file_course(lcourse, path + "/courses.csv", duration))
 			break;
+		else
+		{
+			system("cls");
+			gotoxy(40, 13);
+			perror("Error is: ");
+			Sleep(2000);
+		}
 	}
 	string courseID;
 	while (true)
@@ -1321,6 +1354,10 @@ void update_course_information()
 				getline(cin, temp->session);
 				if (save_course_to_file(lcourse, path + "/courses.csv", duration))
 				{
+					update_course_for_each_student(courseID, path, temp);
+					string oldname = path + "/" + courseID + ".csv";
+					string newname = path + "/" + temp->course_id + ".csv";
+					rename(oldname.c_str(), newname.c_str());
 					system("cls");
 					gotoxy(40, 13);
 					cout << "Da cap nhat khoa hoc thanh cong.";
@@ -1368,16 +1405,42 @@ void add_a_student_to_the_course()
 		getline(cin, number);
 		gotoxy(66, 13);
 		getline(cin, year);
-		gotoxy(79, 15);
+		gotoxy(77, 15);
 		getline(cin, courseID);
 		path = "../academic_years/" + year + "/Semester " + number;
 		list_student lstudent;
 		init_list_student(lstudent);
 		if (get_file_student(lstudent, path + "/" + courseID + ".csv"))
 		{
-			add_students_manually(lstudent);
-			if (save_student_to_file(lstudent, path + "/" + courseID + ".csv"))
+			system("cls");
+			int pos = 8;
+			student* std = enter_infor_for_student(pos);
+			add_student(lstudent, std);
+			if (update_student_to_file(lstudent, path + "/" + courseID + ".csv"))
 			{
+				get_file_course(lcourse, path + "/courses.csv", duration);
+				for (course* tam = lcourse.head; tam != NULL; tam = tam->next)
+				{
+					if (tam->course_id == courseID)
+					{
+						init_list_course(lcourse);
+						get_file_course(lcourse, path + "/courses.csv", duration);
+						for (course* tam = lcourse.head; tam != NULL; tam = tam->next)
+						{
+							if (tam->course_id == courseID)
+							{
+								tam->number_of_enroller++;
+								break;
+							}
+						}
+						save_course_to_file(lcourse, path + "/courses.csv", duration);
+						list_course lcourse1;
+						init_list_course(lcourse1);
+						tam->number_of_enroller++;
+						add_course(lcourse1, tam);
+						update_course_to_file(lcourse1, "../academic_years/courseforstudent/" + lstudent.tail->student_ID + ".csv", duration);
+					}
+				}
 				system("cls");
 				gotoxy(40, 13);
 				cout << "Da them hoc sinh thanh cong.";
@@ -1388,7 +1451,7 @@ void add_a_student_to_the_course()
 		else
 		{
 			gotoxy(45, 13);
-			cout << "Khong ton tai khoa hoc.";
+			perror("Error is: ");
 			Sleep(2000);
 		}
 	}
@@ -1427,22 +1490,88 @@ void remove_a_student_from_the_course()
 		getline(cin, number);
 		gotoxy(66, 13);
 		getline(cin, year);
-		gotoxy(78, 15);
+		gotoxy(75, 15);
 		getline(cin, courseID);
 		path = "../academic_years/" + year + "/Semester " + number;
 		list_student lstudent;
 		init_list_student(lstudent);
 		if (get_file_student(lstudent, path + "/" + courseID + ".csv"))
 		{
-			delete_student(lstudent);
-			if (save_student_to_file(lstudent, path + "/" + courseID + ".csv"))
+
+			bool ks = true;
+			string id;
+			while (true)
 			{
 				system("cls");
-				gotoxy(40, 13);
-				cout << "Da xoa mot hoc sinh thanh cong.";
-				Sleep(2000);
-				break;
+				gotoxy(55, 4);
+				cout << "HCMUS";
+				drawbox(33, 5, 53, 20);
+				gotoxy(40, 11);
+				cout << "Nhap ID sinh vien can xoa: ";
+				gotoxy(38, 22);
+				cout << "BACK";
+				key = _getch();
+				switch (key)
+				{
+				case 13:
+					return;
+					break;
+				case 72:
+				case 80:
+					break;
+				}
+				gotoxy(66, 11);
+				getline(cin, id);
+				student* std = lstudent.head;
+				while (std != NULL)
+				{
+					if (std->student_ID == id)
+					{
+						string duration;
+						get_file_course(lcourse, "../academic_years/courseforstudent/" + id + ".csv", duration);
+						for (course* tam = lcourse.head; tam != NULL; tam = tam->next)
+						{
+							if (tam->course_id == courseID)
+							{
+								del_course(lcourse, tam);
+								break;
+							}
+						}
+						save_course_to_file(lcourse, "../academic_years/courseforstudent/" + id + ".csv", duration);
+						init_list_course(lcourse);
+						get_file_course(lcourse, path + "/courses.csv", duration);
+						for (course* tam = lcourse.head; tam != NULL; tam = tam->next)
+						{
+							if (tam->course_id == courseID)
+							{
+								tam->number_of_enroller--;
+								break;
+							}
+						}
+						save_course_to_file(lcourse, path + "/courses.csv", duration);
+						del_student(lstudent, std);
+						ks = false;
+						break;
+					}
+					std = std->next;
+				}
+				save_student_to_file(lstudent, path + "/" + courseID + ".csv");
+				if (ks)
+				{
+					system("cls");
+					gotoxy(40, 13);
+					cout << "Khong tim thay id cua sinh vien vua nhap.";
+					Sleep(2000);
+				}
+				else
+					break;
 			}
+			system("cls");
+			gotoxy(40, 13);
+			cout << "Da xoa mot hoc sinh thanh cong.";
+			Sleep(2000);
+			break;
+
 		}
 		else
 		{
@@ -1450,6 +1579,73 @@ void remove_a_student_from_the_course()
 			cout << "Khong ton tai khoa hoc.";
 			Sleep(2000);
 		}
+	}
+}
+void add_courses()
+{
+	int key, pos = 8;
+	string year, path, number, duration;
+	list_course lcourse;
+	init_list_course(lcourse);
+	while (true)
+	{
+		system("cls");
+		gotoxy(55, 4);
+		cout << "HCMUS";
+		drawbox(33, 5, 53, 20);
+		gotoxy(40, 11);
+		cout << "Nhap hoc ky : ";
+		gotoxy(40, 13);
+		cout << "Nhap nam hoc cua hoc ky: ";
+		gotoxy(38, 22);
+		cout << "BACK";
+		key = _getch();
+		switch (key)
+		{
+		case 13:
+			return;
+			break;
+		case 72:
+		case 80:
+			break;
+		}
+		gotoxy(55, 11);
+		getline(cin, number);
+		gotoxy(66, 13);
+		getline(cin, year);
+		path = "../academic_years/" + year + "/Semester " + number;
+			system("cls");
+			course* crs = enter_infor_for_course(pos);
+			system("cls");
+			gotoxy(40, 13);
+			cout << "Da them mot khoa hoc thanh cong, hay them file hoc sinh.";
+			Sleep(2000);
+			system("cls");
+			list_student lstudent;
+			init_list_student(lstudent);
+			add_students_by_importing_file(lstudent);
+			save_student_to_file(lstudent, path + "/" + crs->course_id + ".csv");
+			int sl = 0;
+			for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
+				sl++;
+			crs->number_of_enroller = sl;
+			add_course(lcourse, crs);
+			courses_of_each_student(lstudent, path, lcourse, duration);
+			if (update_course_to_file(lcourse, path + "/courses.csv", duration))
+			{
+				system("cls");
+				gotoxy(40, 13);
+				cout << "Da them mot khoa hoc thanh cong.";
+				Sleep(2000);
+				break;
+			}
+			else
+			{
+				system("cls");
+				gotoxy(40, 13);
+				perror("Error is: ");
+				Sleep(2000);
+			}
 	}
 }
 void delete_a_course()
@@ -1516,6 +1712,7 @@ void delete_a_course()
 		{
 			if (temp->course_id == courseID)
 			{
+				delete_course_for_each_student(courseID, path);
 				del_course(lcourse, temp);
 				string path_for_file_student = path + "/" + courseID + ".csv";
 				remove(path_for_file_student.c_str());

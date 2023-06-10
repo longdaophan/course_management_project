@@ -91,9 +91,12 @@ student* enter_infor_for_student(int &pos)
     getline(cin, temp->last_name);
     gotoxy(72, pos);
     getline(cin, temp->gender);
-    gotoxy(82, pos);
-    getline(cin, str);
-    temp->date_of_birth = convert_str_to_date(str);
+    do
+    {
+        gotoxy(82, pos);
+        getline(cin, str);
+        temp->date_of_birth = convert_str_to_date(str);
+    } while (!check_day_of_birth(temp->date_of_birth));
     gotoxy(99, pos++);
     getline(cin, temp->social_ID);
     temp->next = temp->prev = NULL;
@@ -151,18 +154,20 @@ void del_student(list_student& lstudent, student* del)
     {
         student* temp = lstudent.head;
         lstudent.head = temp->next;
+        lstudent.head->prev = NULL;
         delete temp;
         lstudent.size--;
-        lstudent.head->prev = NULL;
+       
         return;
     }
     else if (lstudent.tail == del)// xoa cuoi
     {
         student* temp = lstudent.tail;
         lstudent.tail = temp->prev;
+        lstudent.tail->next = NULL;
         delete temp;
         lstudent.size--;
-        lstudent.tail->next = NULL;
+        
         return;
     }
     else// xoa giua
@@ -374,8 +379,9 @@ bool get_file_student(list_student& lstudent, string path)
             temp->next = temp->prev = NULL;
             add_student(lstudent, temp);
         }
+        file.close();
     }
-    file.close();
+   
     return true;
 }
 bool get_file_staff(list_staff& lstaff, string path)
@@ -390,6 +396,7 @@ bool get_file_staff(list_staff& lstaff, string path)
         return false;
     }
     else
+    {
         while (!file.eof())
         {
             staff* temp = new staff;
@@ -409,7 +416,9 @@ bool get_file_staff(list_staff& lstaff, string path)
             temp->next = temp->prev = NULL;
             add_staff(lstaff, temp);
         }
-    file.close();
+        file.close();
+    }
+   
     return true;
     
 }
@@ -418,10 +427,6 @@ bool get_file_course(list_course& lcourse, string path, string& length_of_course
     ifstream file(path);
     if (file.fail())
     {
-        system("cls");
-        gotoxy(40, 13);
-        cout << "File mo khong thanh cong.";
-        Sleep(2000);
         return false;
     }
     else
@@ -435,13 +440,10 @@ bool get_file_course(list_course& lcourse, string path, string& length_of_course
             getline(file, temp->course_name, ',');
             getline(file, temp->class_name, ',');
             getline(file, temp->teacher_name, ',');
-            cout << temp->teacher_name;
             getline(file, str, ',');
-            cout << str;
             if (str == "")
                 return true;
             temp->number_of_credit = stoi(str);
-           
             getline(file, str, ',');
             if (str == "")
                 return true;
@@ -455,45 +457,124 @@ bool get_file_course(list_course& lcourse, string path, string& length_of_course
             temp->next = temp->prev = NULL;
             add_course(lcourse, temp);
         }
+        file.close();
     }
-    file.close();
+    
     return true;
 }
 bool save_student_to_file(list_student lstudent, string path)
 {
-    ofstream file(path);
+    ofstream file;
+    file.open(path);
     if (file.fail())
     {
         system("cls");
         gotoxy(40, 13);
-        cout << "File mo khong thanh cong.";
+        perror("error is: ");
         Sleep(2000);
         return false;
     }
     else
-    for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
     {
-        file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
-            << temp->gender << "," << convert_date_to_str(temp->date_of_birth) << "," << temp->social_ID;
-        if (temp != NULL) file << endl;
-    }
-    file.close();
-    return true;
-}
-bool update_student_to_file(list_student lstudent, string path)
-{
-    ofstream file;
-    file.open(path, ios::app);
-    if (file.fail())
-        return false;
-    else
+
         for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
         {
             file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
                 << temp->gender << "," << convert_date_to_str(temp->date_of_birth) << "," << temp->social_ID;
             if (temp != NULL) file << endl;
         }
-    file.close();
+        file.close();
+    }
+    
+    return true;
+}
+bool update_student_to_file(list_student lstudent, string path)
+{
+    list_student lstudent1;
+    init_list_student(lstudent1);
+    bool check = false;
+    if (get_file_student(lstudent1, path))
+        check = true;
+    ofstream file;
+    file.open(path, ios::app);
+    if (file.fail())
+        return false;
+    else
+    {
+        if (check)
+            for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
+            {
+                bool ks = true;
+                for (student* temp1 = lstudent1.head; temp1 != NULL; temp1 = temp1->next)
+                    if (temp1->student_ID == temp->student_ID)
+                    {
+                        ks = false;
+                        break;
+                    }
+                if(ks)
+                {
+                  file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
+                            << temp->gender << "," << convert_date_to_str(temp->date_of_birth) << "," << temp->social_ID;
+                  if (temp != NULL) file << endl;
+                }
+            }
+        else
+            for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
+            {
+                file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
+                    << temp->gender << "," << convert_date_to_str(temp->date_of_birth) << "," << temp->social_ID;
+                if (temp != NULL) file << endl;
+            }
+        file.close();
+    }
+    
+    return true;
+}
+bool update_course_to_file(list_course lcourse, string path, string duration)
+{
+    list_course lcourse1;
+    init_list_course(lcourse1);
+    bool check = false;
+    if (get_file_course(lcourse1, path, duration))
+        check = true;
+    ofstream file;
+    file.open(path, ios::app);
+    if (file.fail())
+        return false;
+    else
+    {
+        if (check)
+        {
+            for (course* temp = lcourse.head; temp != NULL; temp = temp->next)
+            {
+                bool ks = true;
+                for (course* temp1 = lcourse1.head; temp1 != NULL; temp1 = temp1->next)
+                    if (temp->course_id == temp1->course_id)
+                    {
+                        ks = false;
+                        break;
+                    }
+                if (ks)
+                {
+                    file << temp->course_id << "," << temp->course_name << "," << temp->class_name << "," << temp->teacher_name << "," << temp->number_of_credit << "," << temp->max_number << ","
+                        << temp->number_of_enroller << "," << temp->week_day << "," << temp->session;
+                    if (temp != NULL) file << endl;
+                }
+            }
+        }
+        else
+        {
+            file << duration << endl;
+            for (course* temp = lcourse.head; temp != NULL; temp = temp->next)
+            {
+                file << temp->course_id << "," << temp->course_name << "," << temp->class_name << "," << temp->teacher_name << "," << temp->number_of_credit << "," << temp->max_number << ","
+                    << temp->number_of_enroller << "," << temp->week_day << "," << temp->session;
+                if (temp != NULL) file << endl;
+            }
+        }
+        file.close();
+    }
+   
     return true;
 }
 bool save_staff_to_file(list_staff lstaff, string path)
@@ -508,13 +589,16 @@ bool save_staff_to_file(list_staff lstaff, string path)
         return false;
     }
     else
-    for (staff* temp = lstaff.head; temp != NULL; temp = temp->next)
     {
-        file << temp->no << "," << temp->staff_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
-            << temp->gender << "," << convert_date_to_str(temp->date_of_birth) << "," << temp->social_ID;
-        if (temp != NULL) file << endl;
+        for (staff* temp = lstaff.head; temp != NULL; temp = temp->next)
+        {
+            file << temp->no << "," << temp->staff_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << ","
+                << temp->gender << "," << convert_date_to_str(temp->date_of_birth) << "," << temp->social_ID;
+            if (temp != NULL) file << endl;
+        }
+        file.close();
     }
-    file.close();
+   
     return true;
 }
 bool save_course_to_file(list_course lcourse, string path, string duration)
@@ -537,8 +621,9 @@ bool save_course_to_file(list_course lcourse, string path, string duration)
                 << temp->number_of_enroller << "," << temp->week_day << "," << temp->session;
             if (temp != NULL) file << endl;
         }
+        file.close();
     }
-    file.close();
+   
     return true;
 }
 void display_student(list_student lstudent)
@@ -619,4 +704,87 @@ void display_course(list_course lcourse)
         cout << temp->session;
     }
     gotoxy(0, pos + 2);
+}
+void courses_of_each_student(list_student lstudent, string path, list_course course, string duration)
+{
+    path = "../academic_years/courseforstudent";
+    for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
+    {
+        update_course_to_file(course, path + "/" + temp->student_ID + ".csv", duration);
+    }
+}
+bool check_day_of_birth(Date date)
+{
+    if (date.month < 1 || date.month>12 || date.year < 1 )
+        return false;
+    bool nhuan = false;
+    int max;
+    if (date.year % 400 == 0 || (date.year % 4 == 0 && date.year % 100 != 0))
+        nhuan = true;
+    switch (date.month)
+    {
+    case 1:case 3: case 5: case 7: case 8: case 10: case 12:
+        max = 31;
+        break;
+    case 2:
+        if (nhuan)
+            max = 29;
+        else
+            max = 28;
+        break;
+    case 4: case 6: case 9: case 11:
+        max = 30;
+        break;
+    }
+    if (date.day<1 || date.day>max)
+        return false;
+    return true;
+}
+void update_course_for_each_student(string courseID, string path, course* crs)
+{
+    list_student lstudent;
+    init_list_student(lstudent);
+    get_file_student(lstudent, path+"/"+courseID+".csv");
+    for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
+    {
+        list_course lcourse;
+        init_list_course(lcourse);
+        string duration;
+        if (get_file_course(lcourse, "../academic_years/courseforstudent/" + temp->student_ID + ".csv", duration))
+        {
+            for (course* tam = lcourse.head; tam != NULL; tam = tam->next)
+            {
+                if (tam->course_id == courseID)
+                {
+                    *tam = *crs;
+                    save_course_to_file(lcourse, "../academic_years/courseforstudent/" + temp->student_ID + ".csv", duration);
+                    break;
+                }
+            }
+        }
+    }
+}
+void delete_course_for_each_student(string courseID, string path)
+{
+    list_student lstudent;
+    init_list_student(lstudent);
+    get_file_student(lstudent, path + "/" + courseID + ".csv");
+    for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
+    {
+        list_course lcourse;
+        init_list_course(lcourse);
+        string duration;
+        if (get_file_course(lcourse, "../academic_years/courseforstudent/" + temp->student_ID + ".csv", duration))
+        {
+            for (course* tam = lcourse.head; tam != NULL; tam = tam->next)
+            {
+                if (tam->course_id == courseID)
+                {
+                    del_course(lcourse, tam);
+                    save_course_to_file(lcourse, "../academic_years/courseforstudent/" + temp->student_ID + ".csv", duration);
+                    break;
+                }
+            }
+        }
+    }
 }
