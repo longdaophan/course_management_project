@@ -78,6 +78,23 @@ struct course
 	course* prev;
 	course* next;
 };
+struct scoreboard
+{
+	int no;
+	string student_id;
+	string student_full_name;
+	float midterm_mark;
+	float final_mark;
+	float total_mark;
+	string other_mark;
+	scoreboard* prev;
+	scoreboard* next;
+};
+struct list_scoreboard
+{
+	scoreboard* head;
+	scoreboard* tail;
+};
 struct list_course
 {
 	course* head;
@@ -102,6 +119,7 @@ void init_list_student(list_student &lstudent);
 void init_list_staff(list_staff &lstaff);
 void init_list_course(list_course &lcourse);
 void init_list_class(list_class& lclass);
+void init_list_scoreboard(list_scoreboard& lscoreboard);
 bool get_file_student(list_student& lstudent, string path);
 bool get_file_staff(list_staff& lstaff, string path);
 bool get_file_course(list_course& lcourse, string path, string &length_of_course);
@@ -126,3 +144,12 @@ void courses_of_each_student(list_student lstudent, string path, list_course cou
 void display_student(list_student lstudent);
 void display_course(list_course lcourse);
 bool check_day_of_birth(Date date);
+void display_scoreboard_of_a_course(list_scoreboard lscoreboard);
+bool get_file_scoreboard_of_a_course(string path, list_scoreboard &lscoreboard);
+bool save_file_scoreboard(string path, list_scoreboard lscoreboard);
+bool update_scoreboard_to_file(scoreboard* temp, string path,course* course);
+void add_scoreboard(list_scoreboard& lscoreboard, scoreboard* add);
+void enter_scoreboard(scoreboard* temp);
+void scoreboard_of_each_student(list_scoreboard lscoreboard,course* course);
+bool update_scoreboard_for_a_student(string path, scoreboard* score, string courseID);
+void display_scoreboard_of_a_class(list_student lstudent);

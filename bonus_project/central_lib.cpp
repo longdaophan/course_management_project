@@ -45,6 +45,10 @@ void init_list_class(list_class& lclass)
     lclass.head = lclass.tail = NULL;
     lclass.size = 0;
 }
+void init_list_scoreboard(list_scoreboard& lscoreboard)
+{
+    lscoreboard.head = lscoreboard.tail = NULL;
+}
 void add_student(list_student& lstudent, student* add)
 {
     if (lstudent.head == NULL)
@@ -324,6 +328,17 @@ void del_course(list_course& lcourse, course* del)
         }
     }
 }
+void add_scoreboard(list_scoreboard& lscoreboard, scoreboard* add)
+{
+    if (lscoreboard.head == NULL)
+        lscoreboard.head = lscoreboard.tail = add;
+    else
+    {
+        lscoreboard.tail->next = add;
+        add->prev = lscoreboard.tail;
+        lscoreboard.tail = add;
+    }
+}
 string convert_date_to_str(Date date)
 {
     string str="";
@@ -354,7 +369,7 @@ bool get_file_student(list_student& lstudent, string path)
     {
         system("cls");
         gotoxy(40, 13);
-        cout << "File mo khong thanh cong.";
+        perror("Error is: ");
         Sleep(2000);
         return false;
     }
@@ -787,4 +802,331 @@ void delete_course_for_each_student(string courseID, string path)
             }
         }
     }
+}
+void display_scoreboard_of_a_course(list_scoreboard lscoreboard)
+{
+    int pos = 8;
+    drawbox(15, 5, 95, 2);
+    gotoxy(16, 6);
+    cout << "  No  |";
+    gotoxy(24, 6);
+    cout << "  Student ID  |";
+    gotoxy(40, 6);
+    cout << "      Full name      |";
+    gotoxy(63, 6);
+    cout << "Midterm mark|";
+    gotoxy(77, 6);
+    cout << "Final mark|";
+    gotoxy(89, 6);
+    cout << "Total mark|";
+    gotoxy(100, 6);
+    cout << " Other mark";
+    for (scoreboard* temp = lscoreboard.head; temp != NULL; temp = temp->next)
+    {
+        gotoxy(16, pos);
+        cout << temp->no;
+        gotoxy(26, pos);
+        cout << temp->student_id;
+        gotoxy(42, pos);
+        cout << temp->student_full_name;
+        gotoxy(65, pos);
+        cout << temp->midterm_mark;
+        gotoxy(79, pos);
+        cout << temp->final_mark;
+        gotoxy(91, pos);
+        cout << temp->total_mark;
+        gotoxy(102, pos++);
+        cout << temp->other_mark;
+    }
+    gotoxy(0, pos + 2);
+}
+bool get_file_scoreboard_of_a_course(string path, list_scoreboard& lscoreboard)
+{
+    string no, studentID, name, ttmark, fnmark, midmark, other;
+    ifstream file(path);
+    if (file.fail())
+    {
+        system("cls");
+        gotoxy(40, 13);
+        perror("Error is: ");
+        Sleep(2000);
+        return false;
+    }
+    else
+    {
+        getline(file, no, ',');
+        getline(file, studentID, ',');
+        getline(file, name, ',');
+        getline(file, midmark, ',');
+        getline(file, fnmark, ',');
+        getline(file, ttmark, ',');
+        getline(file, other, '\n');
+        while (!file.eof())
+        {
+            scoreboard* temp = new scoreboard;
+            string str;
+            getline(file, str, ',');
+            if (str == "") return true;
+            temp->no = stoi(str);
+            getline(file, temp->student_id, ',');
+            getline(file, temp->student_full_name, ',');
+            getline(file, str, ',');
+            temp->midterm_mark = stof(str);
+            getline(file, str, ',');
+            temp->final_mark = stof(str);
+            getline(file, str, ',');
+            temp->total_mark = stof(str);
+            getline(file, temp->other_mark, '\n');
+            temp->next = temp->prev = NULL;
+            add_scoreboard(lscoreboard, temp);
+        }
+        file.close();
+    }
+    return true;
+}
+bool save_file_scoreboard(string path, list_scoreboard lscoreboard)
+{
+    ofstream file;
+    file.open(path);
+    if (file.fail())
+    {
+        system("cls");
+        gotoxy(40, 13);
+        perror("error is: ");
+        Sleep(2000);
+        return false;
+    }
+    else
+    {
+        file << "No" << "," << "Student ID" << "," << "Student full name" << "," << "Midterm mark" << "," << "Final mark" << "," << "Total mark" << "," << "Other mark" << endl;
+        for (scoreboard* temp = lscoreboard.head; temp != NULL; temp = temp->next)
+        {
+            file << temp->no << "," << temp->student_id << "," << temp->student_full_name << "," 
+                << temp->midterm_mark << "," << temp->final_mark << "," << temp->total_mark  << "," << temp->other_mark;
+            if (temp != NULL) file << endl;
+        }
+        file.close();
+    }
+    return true;
+}
+void enter_scoreboard(scoreboard* temp)
+{
+    int pos = 8;
+    drawbox(15, 5, 95, 2);
+    gotoxy(16, 6);
+    cout << "  No  |";
+    gotoxy(24, 6);
+    cout << "  Student ID  |";
+    gotoxy(40, 6);
+    cout << "    Full name    |";
+    gotoxy(63, 6);
+    cout << "Midterm mark|";
+    gotoxy(77, 6);
+    cout << "Final mark|";
+    gotoxy(89, 6);
+    cout << "Total mark|";
+    gotoxy(100, 6);
+    cout << " Other mark";
+
+    string str;
+    gotoxy(16, pos);
+    cout << temp->no;
+    gotoxy(26, pos);
+    cout << temp->student_id;
+    gotoxy(42, pos);
+    cout << temp->student_full_name;
+    gotoxy(65, pos);
+    getline(cin, str);
+    temp->midterm_mark = stof(str);
+    gotoxy(79, pos);
+    getline(cin, str);
+    temp->final_mark = stof(str);
+    gotoxy(91, pos);
+    getline(cin, str);
+    temp->total_mark = stof(str);
+    gotoxy(102, pos);
+    getline(cin, temp->other_mark);
+}
+bool update_scoreboard_to_file(scoreboard* temp, string path,course* course)
+{
+    ofstream file;
+    file.open(path, ios::app);
+    if (file.fail())
+        return false;
+    else
+    {
+        file << course->course_id << "," << course->course_name << "," << temp->midterm_mark << "," << temp->final_mark << "," << temp->total_mark << "," << temp->other_mark << endl;
+        file.close();
+        return true;
+    }
+}
+void scoreboard_of_each_student(list_scoreboard lscoreboard,course* course)
+{
+    string path = "../academic_years/courseforstudent/";
+    for (scoreboard* temp = lscoreboard.head; temp != NULL; temp = temp->next)
+    {
+        update_scoreboard_to_file(temp, path + temp->student_id + "_scoreboard.csv", course);
+    }
+}
+bool update_scoreboard_for_a_student(string path, scoreboard* score, string courseID)
+{
+    list_course lcourse;
+    init_list_course(lcourse);
+    list_scoreboard lscoreboard;
+    init_list_scoreboard(lscoreboard);
+    ifstream file(path);
+    if (file.fail())
+        return false;
+    else
+    {
+        while (!file.eof())
+        {
+            scoreboard* sco = new scoreboard;
+            course* cour = new course;
+            string str;
+            getline(file, cour->course_id, ',');
+            getline(file, cour->course_name, ',');
+            getline(file, str, ',');
+            if (str == "") break;
+            sco->midterm_mark = stof(str); 
+            getline(file, str, ',');
+            sco->final_mark = stof(str);
+            getline(file, str, ',');
+            sco->total_mark = stof(str);
+            getline(file, sco->other_mark, '\n');
+            sco->next = sco->prev = NULL;
+            cour->next = cour->prev = NULL;
+            add_scoreboard(lscoreboard, sco);
+            add_course(lcourse, cour);
+        }
+        file.close();
+    }
+    ofstream file1(path);
+    if (file1.is_open())
+    {
+        course* temp = lcourse.head;
+        scoreboard* tam = lscoreboard.head;
+        while (tam != NULL && temp != NULL)
+        {
+            if (temp->course_id == courseID)
+            {
+                *tam = *score;
+                break;
+            }
+            temp = temp->next;
+            tam = tam->next;
+        }
+        temp = lcourse.head;
+        tam = lscoreboard.head;
+        while (tam != NULL && temp != NULL)
+        {
+            file1 << temp->course_id << "," << temp->course_name << ","
+                << tam->midterm_mark << "," << tam->final_mark << "," << tam->total_mark << "," << tam->other_mark;
+            if (temp != NULL && tam!=NULL) file1 << endl;
+            temp = temp->next;
+            tam = tam->next;
+        }
+        file1.close();
+    }
+    return true;
+}
+void display_scoreboard_of_a_class(list_student lstudent)
+{
+    system("cls");
+    int pos = 8;
+    float overall_GDP = 0;
+    for (student* temp = lstudent.head; temp != NULL; temp = temp->next)
+    {
+        float GDP = 0;
+        int sl = 0;
+        list_course lcourse;
+        init_list_course(lcourse);
+        list_scoreboard lscoreboard;
+        init_list_scoreboard(lscoreboard);
+        ifstream file("../academic_years/courseforstudent/"+temp->student_ID+ "_scoreboard.csv");
+        if (file.fail())
+            return;
+        else
+        {
+            while (!file.eof())
+            {
+                scoreboard* sco = new scoreboard;
+                course* cour = new course;
+                string str;
+                getline(file, cour->course_id, ',');
+                getline(file, cour->course_name, ',');
+                getline(file, str, ',');
+                if (str == "") break;
+                sco->midterm_mark = stof(str);
+                getline(file, str, ',');
+                sco->final_mark = stof(str);
+                getline(file, str, ',');
+                sco->total_mark = stof(str);
+                getline(file, sco->other_mark, '\n');
+                sco->next = sco->prev = NULL;
+                cour->next = cour->prev = NULL;
+                add_scoreboard(lscoreboard, sco);
+                add_course(lcourse, cour);
+                sl++;
+                GDP += sco->total_mark;
+            }
+            file.close();
+            GDP /= sl;
+        }
+        overall_GDP += GDP;
+        drawbox(2, 5, 115, 2);
+        gotoxy(3, 6);
+        cout << " No|";
+        gotoxy(8, 6);
+        cout << " Student ID|";
+        gotoxy(20, 6);
+        cout << "      Full name      |";
+        gotoxy(43, 6);
+        cout << "  Course ID |";
+        gotoxy(57, 6);
+        cout << "     Cousre name    |";
+        gotoxy(79, 6);
+        cout << "Midterm |";
+        gotoxy(89, 6);
+        cout << "Final |";
+        gotoxy(97, 6);
+        cout << "Total |";
+        gotoxy(105, 6);
+        cout << "Other |";
+        gotoxy(112, 6);
+        cout << "GDP ";
+        course* temp1 = lcourse.head;
+        scoreboard* tam = lscoreboard.head;
+        gotoxy(4, pos);
+        cout << temp->no;
+        gotoxy(9, pos);
+        cout << temp->student_ID;
+        gotoxy(21, pos);
+        cout << temp->first_name + " " + temp->last_name;
+        while (tam != NULL && temp1 != NULL)
+        {
+            gotoxy(44, pos);
+            cout << temp1->course_id;
+            gotoxy(58, pos);
+            cout << temp1->course_name;
+            gotoxy(80, pos);
+            cout << tam->midterm_mark;
+            gotoxy(90, pos);
+            cout << tam->final_mark;
+            gotoxy(98, pos);
+            cout << tam->total_mark;
+            gotoxy(106, pos++);
+            cout << tam->other_mark;
+            temp1 = temp1->next;
+            tam = tam->next;
+        }
+        gotoxy(113, pos++);
+        cout << GDP;
+    }
+    overall_GDP /= lstudent.size;
+    gotoxy(113, pos++);
+    cout << "------";
+    gotoxy(113, pos++);
+    cout << overall_GDP;
+    gotoxy(0, pos + 2);
 }

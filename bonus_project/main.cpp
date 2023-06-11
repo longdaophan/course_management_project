@@ -10,6 +10,10 @@ int main()
 	display_course(lcourse);*/
 	//save_course_to_file(lcourse, path + "/courses.csv", duration);
 	login_system();
+	/*list_scoreboard lscoreboard;
+	init_list_scoreboard(lscoreboard);
+	get_file_scoreboard_of_a_course("../academic_years/2022/Semester 1/GEO00002.csv", lscoreboard);
+	display_scoreboard_of_a_course(lscoreboard);*/
 	/*list_student lstudent;
 	init_list_student(lstudent);
 	get_file_student(lstudent, "student.csv");
