@@ -19,7 +19,5 @@ int main()
 	get_file_student(lstudent, "student.csv");
 	display_student(lstudent);
 	save_student_to_file(lstudent, "student.csv");*/
-	gotoxy(0, 27);
-	system("pause");
 	return 0;
 }

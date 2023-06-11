@@ -33,6 +33,7 @@ string login_interface()
 {
 	string id ;
 	string password ;
+	int key;
 		system("cls");
 		drawbox(40, 5, 40, 20);
 		gotoxy(58, 6);
@@ -41,6 +42,19 @@ string login_interface()
 		cout << "Id:";
 		gotoxy(45, 9);
 		cout << "Password:";
+		gotoxy(42, 22);
+		cout << "EXIT";
+		key = _getch();
+		switch (key)
+		{
+		case 13:
+			gotoxy(0, 27);
+			system("pause");
+			exit(0);
+		case 72:
+		case 80:
+			break;
+		}
 		gotoxy(48, 8);
 		getline(cin, id);
 		gotoxy(54, 9);
