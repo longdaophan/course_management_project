@@ -421,7 +421,7 @@ void profile(staff* staff, list_staff lstaff)
 		break;
 	}
 }
-void manage_academic_years(staff* staff, list_staff lstaff/*, list_student lstudent, list_class lclass, list_course lcourse*/)
+void manage_academic_years(staff* staff, list_staff lstaff)
 {
 	int pos = 11;
 	int x;
@@ -603,47 +603,6 @@ void view_list_of_classes()
 		}
 	}
 }
-//void view_academic_years(list_student lstudent)
-//{
-//	int key;
-//	while (true)
-//	{
-//		system("cls");
-//		gotoxy(55, 4);
-//		cout << "HCMUS";
-//		drawbox(33, 5, 53, 20);
-//		gotoxy(40, 11);
-//		cout << "Nhap nam hoc : ";
-//		gotoxy(40, 13);
-//		cout << "Nhap ten lop: ";
-//		gotoxy(38, 22);
-//		cout << "BACK";
-//		key = _getch();
-//		switch (key)
-//		{
-//		case 13:
-//			return;
-//			break;
-//		case 72:
-//		case 80:
-//			break;
-//		}
-//		gotoxy(54, 11);
-//		getline(cin, year);
-//		gotoxy(53, 13);
-//		getline(cin, class_name);
-//		path = "../academic_years/" + year + "/" + class_name + "/" + class_name + ".csv";+
-//		system("cls");
-//		list_student lstudent;
-//		init_list_student(lstudent);
-//		if (get_file_student(lstudent, path))
-//		{
-//			display_student(lstudent);
-//			system("pause");
-//			break;
-//		}
-//	}
-//}
 void add_students_manually(list_student &lstudent_for_new_class)
 {
 	int key;

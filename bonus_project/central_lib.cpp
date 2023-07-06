@@ -1,5 +1,5 @@
 #include "central_lib.h"
-void gotoxy(short x, short y)
+void gotoxy(short x, short y)// lay tu tren mang do khong hieu code
 {
     COORD coor = { x, y };
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coor);
@@ -190,30 +190,6 @@ void del_student(list_student& lstudent, student* del)
         }
     }
 }
-//void save_student_to_file(student* save)
-//{
-//    ofstream file;
-//    file.open("student.csv");
-//    for (student* temp = save; temp != NULL; temp = temp->next)
-//    {
-//        file << temp->no << "," << temp->student_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << "," << temp->gender << ","
-//            << temp->date_of_birth.day << "/" << temp->date_of_birth.month << "/" << temp->date_of_birth.year << "," << temp->social_ID;
-//        if (temp != NULL) file << endl;
-//    }
-//    file.close();
-//}
-//void save_staff_to_file(staff* save)
-//{
-//    ofstream file;
-//    file.open("staff.csv");
-//    for (staff* temp = save; temp != NULL; temp = temp->next)
-//    {
-//        file << temp->no << "," << temp->staff_ID << "," << temp->password << "," << temp->first_name << "," << temp->last_name << "," << temp->gender << "," 
-//            << temp->date_of_birth.day << "/" << temp->date_of_birth.month << "/"<< temp->date_of_birth.year << "," << temp->social_ID;
-//        if (temp != NULL) file << endl;
-//    }
-//    file.close();
-//}
 void add_staff(list_staff& lstaff, staff* add)
 {
     if (lstaff.head == NULL)
@@ -1045,7 +1021,7 @@ void display_scoreboard_of_a_class(list_student lstudent)
         init_list_scoreboard(lscoreboard);
         ifstream file("../academic_years/courseforstudent/"+temp->student_ID+ "_scoreboard.csv");
         if (file.fail())
-            return;
+            continue;
         else
         {
             while (!file.eof())

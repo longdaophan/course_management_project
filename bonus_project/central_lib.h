@@ -2,25 +2,24 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <fstream>
-#include <Windows.h>
+#include <Windows.h>// thu vien de dung gotoxy
 #include <string>
-#include <fstream>
 #include <stdio.h>
 #include <conio.h>
 #include <direct.h>
-#include <errno.h>
+#include <errno.h>// thu vien de thong bao loi
 
 
 
 using namespace std;
 //using namespace std::filesystem;
-struct Date
+struct Date// Ngay thang nam
 {
 	int day;
 	int month;
 	int year;
 };
-struct student
+struct student// Hoc sinh
 {
 	int no;
 	string student_ID;
@@ -39,7 +38,7 @@ struct list_student
 	student* tail;
 	int size;
 };
-struct staff
+struct staff// Nhan vien
 {
 	int no;
 	string staff_ID;
@@ -58,13 +57,13 @@ struct list_staff
 	staff* tail;
 	int size;
 };
-struct semester
+struct semester// Hoc ky
 {
 	int no;
 	Date start;
 	Date end;
 };
-struct course
+struct course// Khoa hoc
 {
 	string course_id;
 	string course_name;
@@ -78,7 +77,7 @@ struct course
 	course* prev;
 	course* next;
 };
-struct scoreboard
+struct scoreboard// Bang diem
 {
 	int no;
 	string student_id;
@@ -113,43 +112,43 @@ struct list_class
 	Class* tail;
 	int size;
 };
-void gotoxy(short x, short y);
-void drawbox(int col, int row, int width, int height);
-void init_list_student(list_student &lstudent);
-void init_list_staff(list_staff &lstaff);
-void init_list_course(list_course &lcourse);
-void init_list_class(list_class& lclass);
-void init_list_scoreboard(list_scoreboard& lscoreboard);
-bool get_file_student(list_student& lstudent, string path);
-bool get_file_staff(list_staff& lstaff, string path);
-bool get_file_course(list_course& lcourse, string path, string &length_of_course);
-student* enter_infor_for_student(int &pos);
-void add_student(list_student& lstudent, student* add);
-void del_student(list_student& lstudent, student* del);
-void add_staff(list_staff& lstaff, staff* add);
-void del_staff(list_staff& lstaff, staff* del);
-bool save_student_to_file(list_student lstudent, string path);
-bool update_student_to_file(list_student lstudent, string path);
-bool update_course_to_file(list_course lcourse, string path, string duration);
-void update_course_for_each_student(string courseID, string path, course* crs);
-void delete_course_for_each_student(string courseID, string path);
-bool save_staff_to_file(list_staff lstaff, string path);
-bool save_course_to_file(list_course lcourse, string path, string duration);
-void add_course(list_course& lcourse, course* add);
-void del_course(list_course& lcourse, course* del);
-course* enter_infor_for_course(int &pos);
-string convert_date_to_str(Date date);
-Date convert_str_to_date(string str);
-void courses_of_each_student(list_student lstudent, string path, list_course course, string duration);
-void display_student(list_student lstudent);
-void display_course(list_course lcourse);
-bool check_day_of_birth(Date date);
-void display_scoreboard_of_a_course(list_scoreboard lscoreboard);
-bool get_file_scoreboard_of_a_course(string path, list_scoreboard &lscoreboard);
-bool save_file_scoreboard(string path, list_scoreboard lscoreboard);
-bool update_scoreboard_to_file(scoreboard* temp, string path,course* course);
-void add_scoreboard(list_scoreboard& lscoreboard, scoreboard* add);
-void enter_scoreboard(scoreboard* temp);
-void scoreboard_of_each_student(list_scoreboard lscoreboard,course* course);
-bool update_scoreboard_for_a_student(string path, scoreboard* score, string courseID);
-void display_scoreboard_of_a_class(list_student lstudent);
+void gotoxy(short x, short y);// Ham nay copy hoan toan tren mang
+void drawbox(int col, int row, int width, int height);// Ham ve khung
+void init_list_student(list_student &lstudent);// khoi tao danh sach hoc sinh
+void init_list_staff(list_staff &lstaff);// khoi tao danh sach nhan vien
+void init_list_course(list_course &lcourse);// khoi tao danh sach khoa hoc
+void init_list_class(list_class& lclass);// khoi tao danh sach lop hoc
+void init_list_scoreboard(list_scoreboard& lscoreboard);// khoi tao danh sach bang diem
+bool get_file_student(list_student& lstudent, string path);// Lay file danh sach hoc sinh tu file csv va luu vao thanh mot danh sach lien ket doi, co head la lstudent, truyen duong dan
+bool get_file_staff(list_staff& lstaff, string path);// Lay file nhan vien
+bool get_file_course(list_course& lcourse, string path, string &length_of_course);// Lay file khoa hoc
+student* enter_infor_for_student(int &pos);// Ham nhap thong tin cho mot hoc sinh vao mot Node, pos dung de dieu khien vi tri nhap thong tin thanh tung dong
+void add_student(list_student& lstudent, student* add);// Them mot hoc sinh vao danh sach
+void del_student(list_student& lstudent, student* del);// Xoa mot hoc sinh ra khoi danh sach
+void add_staff(list_staff& lstaff, staff* add);// Them mot nhan vien vao danh sach
+void del_staff(list_staff& lstaff, staff* del);// Xoa mot nhan vien ra khoi danh sach
+bool save_student_to_file(list_student lstudent, string path);// Tao ra file csv va luu danh sach vao file, voi duong dan duoc truyen vao
+bool update_student_to_file(list_student lstudent, string path);// Cap nhat danh sach hoc sinh trong file csv, xoa bo nhung hoc sinh bi trung id
+bool update_course_to_file(list_course lcourse, string path, string duration);// Cap nhat danh sach khoa hoc trong file csv, xoa bo nhung khoa hoc bi trung id
+void update_course_for_each_student(string courseID, string path, course* crs);// Cap nhat khoa hoc vao file hoc sinh, moi hoc sinh co 1 file csv ten la id cua ban than, chua khoa hoc da dang ky
+void delete_course_for_each_student(string courseID, string path);// Xoa khoa hoc trong file 
+bool save_staff_to_file(list_staff lstaff, string path);// Tao ra file csv va luu danh sach vao file, voi duong dan duoc truyen vao
+bool save_course_to_file(list_course lcourse, string path, string duration);// Tao ra file csv va luu danh sach vao file, voi duong dan duoc truyen vao
+void add_course(list_course& lcourse, course* add);// them khoa hoc
+void del_course(list_course& lcourse, course* del);// xoa khoa hoc
+course* enter_infor_for_course(int &pos);// nhap thong tin cho mot khoa hoc
+string convert_date_to_str(Date date);// chuyen doi struct Date sang string
+Date convert_str_to_date(string str);// chuyen doi string sang struct Date
+void courses_of_each_student(list_student lstudent, string path, list_course course, string duration);// tao file csv co chua cac khoa hoc da dang ky, lay ten la id cua sinh vien
+void display_student(list_student lstudent);// trinh bay danh sach hoc sinh ra man hinh
+void display_course(list_course lcourse);// trinh bay danh sach khoa hoc ra man hinh
+bool check_day_of_birth(Date date);// kiem tra ngay thang nam nhap vao co hop le
+void display_scoreboard_of_a_course(list_scoreboard lscoreboard);// trinh bay bang diem ra man hinh
+bool get_file_scoreboard_of_a_course(string path, list_scoreboard &lscoreboard);// lay danh sach ban diem
+bool save_file_scoreboard(string path, list_scoreboard lscoreboard);// luu bang diem vao file
+bool update_scoreboard_to_file(scoreboard* temp, string path,course* course);// cap nhat bang diem
+void add_scoreboard(list_scoreboard& lscoreboard, scoreboard* add);// them diem vao bang diem
+void enter_scoreboard(scoreboard* temp);// nhap diem 
+void scoreboard_of_each_student(list_scoreboard lscoreboard,course* course);// tao file csv co chua tat ca diem cho moi hoc sinh
+bool update_scoreboard_for_a_student(string path, scoreboard* score, string courseID);// cap nhat bang diem
+void display_scoreboard_of_a_class(list_student lstudent);// trinh bay bang diem cho mot lop

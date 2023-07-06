@@ -1,18 +1,17 @@
 #pragma once
 #include "central_lib.h"
-void login_system();
-string login_interface();
-int control(int& pos,int sl ,int max);
+void login_system();// ham nhap id va mat khau
+string login_interface();// giao dien de nhap id mat khau
+int control(int& pos,int sl ,int max);// ham dieu khien viec chon lua bang mui ten trong ban phim
 void student_menu(student* student, list_student lstudent);
 void staff_menu(staff* staff, list_staff lstaff);
 string check_password(string id, string password);
-void change_password(student* student, list_student lstudent);
-void change_password(staff* staff, list_staff lstaff);
-void profile(student* student, list_student lstudent);
-void profile(staff* staff, list_staff lstaff);
-void manage_academic_years(staff* staff, list_staff lstaff/*, list_student lstudent, list_class lclass, list_course lcourse*/ );
+void change_password(student* student, list_student lstudent);// thay doi mat khau cho sinh vien
+void change_password(staff* staff, list_staff lstaff);// thay doi mat khau cho nhan vien
+void profile(student* student, list_student lstudent);// profile hoc sinh
+void profile(staff* staff, list_staff lstaff);// profile nhan vien
+void manage_academic_years(staff* staff, list_staff lstaff);
 void create_new_academic_year();
-//void view_academic_years();
 void add_classes();
 void add_students_manually(list_student &lstudent_for_new_class);
 void add_students_by_importing_file(list_student& lstudent_for_new_class);
